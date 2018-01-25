@@ -1,7 +1,6 @@
-enum Unit_
-{
+const Unit_ = {
   //Life
-  Invalid = 0,
+  Invalid : 0,
   Life,
   Dead,
 
@@ -17,33 +16,28 @@ enum Unit_
   // 방어형태 : 소형, 중형, 대형
   Small,
   Middle,
-  Big,
+  Big
 };
 
-/*name, hp, att, att_type1, att_type2, def_type, spd, money_earn, money_spend,)*/ {
+/*name, hp, att, att_type1, att_type2, def_type, spd, money_earn, money_spend,)*/
   // 이름, 공격력, 공격형태, 방어력, 방어형태, 이동속도, 잡으면 주는 돈, 생성비,
   // 공격형태 : 원거리, 근거리[1] && 일반형(100%), 폭발형(50/75/100%), 진동형(100/50/25%)[2]
   // 방어형태 : 소형, 중형, 대형
  // life는 무생성시 Invalid, 생성시 Live, 죽으면 Dead
 class Unit {
-  public : function Unit(information) {
-    name_ = information.name;
-      hp_ = information.hp;
-    att_ = information.att;
-      att_type1_ = information.att_type1; //원거리, 근거리
-      att_type2_ = information.att_type2; // 일반형, 폭발형, 진동형
-      def_type_ = information.def_type;
-      spd_ = information.spd;
-      money_earn_ = information.money_earn;
-      money_spend_ = information.money_spend;
-      x = 0;
-      enemyindex = -1;
-    }
-
-  private : var name_, hp_, att_, att_type1_, att_type2_;
-            var money_earn_, money_spd_, spd_, def_type_;
-            var x, enemyindex;
-
+  constructor(information) {
+    this.name_ = information.name;
+    this.hp_ = information.hp;
+    this.att_ = information.att;
+    this.att_type1_ = information.att_type1; //원거리, 근거리
+    this.att_type2_ = information.att_type2; // 일반형, 폭발형, 진동형
+    this.def_type_ = information.def_type;
+    this.spd_ = information.spd;
+    this.money_earn_ = information.money_earn;
+    this.money_spend_ = information.money_spend;
+    this.x = 0;
+    this.enemyindex = -1;
+  }
 }
 
 
@@ -61,7 +55,7 @@ class Scene {
 
 	loop() {
       if (/*unit이 추가된 경우 */ 1) {
-        Unit newUnit(information); // 새로운 unit 초기화 및 생성
+        var newUnit = new Unit(information); // 새로운 unit 초기화 및 생성
         unitArr.push(newUnit); // unitArr에 newUnit 맨뒤에 넣음
         unitCnt++;
       }
@@ -80,9 +74,7 @@ class Scene {
         if (unit.enemyindex >= 0 && unit.enemyindex < unitCnt) {
           attackCtrl(unitArr[unit.enemyindex], unit);
         }
-
       })
-		}
 	}
 
 	start() {
@@ -153,4 +145,5 @@ function UnitDie(information) {
 	else
 		return 0;
 }
+
 //hp가 0 이하거나 어느 수준 이상 가면 죽음
