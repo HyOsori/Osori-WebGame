@@ -16,27 +16,34 @@ const Unit_ = {
   // 방어형태 : 소형, 중형, 대형
   Small,
   Middle,
-  Big
+  Big,
+
+  // 팀 : 아군 or 적군
+  Our,
+  Enemy
 };
 
 /*name, hp, att, att_type1, att_type2, def_type, spd, money_earn, money_spend,)*/
   // 이름, 공격력, 공격형태, 방어력, 방어형태, 이동속도, 잡으면 주는 돈, 생성비,
   // 공격형태 : 원거리, 근거리[1] && 일반형(100%), 폭발형(50/75/100%), 진동형(100/50/25%)[2]
   // 방어형태 : 소형, 중형, 대형
+  // range는 범위, team 은 아군 or 적군, delay는 공격 시간차
  // life는 무생성시 Invalid, 생성시 Live, 죽으면 Dead
 class Unit {
-  constructor(information) {
-    this.name_ = information.name;
-    this.hp_ = information.hp;
-    this.att_ = information.att;
-    this.att_type1_ = information.att_type1; //원거리, 근거리
-    this.att_type2_ = information.att_type2; // 일반형, 폭발형, 진동형
-    this.def_type_ = information.def_type;
-    this.spd_ = information.spd;
-    this.money_earn_ = information.money_earn;
-    this.money_spend_ = information.money_spend;
-    this.x = 0;
-    this.enemyindex = -1;
+  constructor(name, hp, att, att_type1, att_type2, def_type, spd, money_earn, money_spend, range, team, delay) {
+    this.name_ = name;
+    this.hp_ = hp;
+    this.att_ = att;
+    this.att_type1_ = att_type1; //원거리, 근거리
+    this.att_type2_ = att_type2; // 일반형, 폭발형, 진동형
+    this.def_type_ = def_type;
+    this.spd_ = spd;
+    this.money_earn_ = money_earn;
+    this.money_spend_ = money_spend;
+    this.range_ = range;
+    this.team_ = team;
+    this.delay_ = delay;
+    this.x = -1; // 생성시 0(아군) 또는 180(적군)으로 초기화
   }
 }
 
@@ -45,8 +52,11 @@ class Scene {
 	constructor(hasLoop) {
 		this.hasLoop = hasLoop;
 		//게임 루프가 필요없는 scene
-		var unitArr = new Array();
-		var unitCnt = 0;
+		var ourUnit = new Array();
+    var eneUnit = new Array();
+		var oUnitCnt = 0;
+    var eUnitCnt = 0;
+    var unitCnt = 0;
 	}
 
 	render() {
@@ -55,25 +65,77 @@ class Scene {
 
 	loop() {
       if (/*unit이 추가된 경우 */ 1) {
-        var newUnit = new Unit(information); // 새로운 unit 초기화 및 생성
-        unitArr.push(newUnit); // unitArr에 newUnit 맨뒤에 넣음
+        var newUnit = new Unit(name, hp, att, att_type1, att_type2, def_type, spd, money_earn, money_spend, range, team, delay); // 새로운 unit 초기화 및 생성
+        if (newUnit.team = Unit_.Our) {
+          ourUnit.x = 0;
+          ourUnit.push(newUnit);
+          oUnitCnt++;
+        }
+        else if (newUnit.team = Unit_.Enemy) {
+          eneUnit.x = 180;
+          eneUnit.push(newUnit);  
+          eUnitCnt++;
+        }
         unitCnt++;
       }
 
-      instance.unitArr.forEach(function(unit, index, object) {
-        if (/*앞에 아무도 없어서 앞으로 갈 수 있을때(미정)*/ 0) {
-          unit.x += 1;
+      instance.ourUnit.forEach(function(unit, index, object) {
+        var check = 0;
+        for (var i = 0; i < oUnitCnt; i++) {
+          if (unit.x <= ourUnit[i].x && ourUnit[i].x <= unit.x + 1)
+            check++;
         }
 
-        if (UnitDie(unitArr[index])) /* 어느 정도 이상 가면 죽음 && hp 적어져서 죽음 : 1 죽음, 0 살음*/ {
+        for (var j = 0; j <= eUnitCnt; j++) {
+          if (unit.x <= eneUnit[j].x && eneUnit[j].x <= unit.x + 1)
+            check++;
+        }
+
+        if (check == 0)
+          unit.x += 1;
+
+        // 어느 정도 이상 가면 죽음 && hp 적어져서 죽음 : 1 죽음, 0 살음
+        if (UnitDie(ourUnit[index]).hp_) {
             object.splice(index, 1);
             unitCnt--;
+            oUnitCnt--;
         }
 
-        //공격이 가능한 경우 공격을 실행함
-        if (unit.enemyindex >= 0 && unit.enemyindex < unitCnt) {
-          attackCtrl(unitArr[unit.enemyindex], unit);
+        //아군의 적군 공격
+        instance.eneUnit.forEach(function(eunit, eindex, eobject) {
+          if (eunit.x <= unit.x + unit.range || unit.x - unit.range <= eunit.x) {
+            attackCtrl(ourUnit[index], eneUnit[eindex]);
+          }
+        })
+      })
+
+      instance.eneUnit.forEach(function(unit, index, object) {
+        var check = 0;
+        for (var i = 0; i < oUnitCnt; i++) {
+          if (ourUnit[i].x <= unit.x && unit.x - 1 <= ourUnit[i].x)
+            check++;
         }
+
+        for (var j = 0; j <= eUnitCnt; j++) {
+          if (eneUnit[j].x <= unit.x && unit.x - 1 <= eneUnit[j].x)
+            check++;
+        }
+
+        if (check == 0)
+          unit.x -= 1;
+
+        // 어느 정도 이상 가면 죽음 && hp 적어져서 죽음 : 1 죽음, 0 살음
+        if (UnitDie(eneUnit[index].hp_)) {
+            object.splice(index, 1);
+            unitCnt--;
+            eUnitCnt--;
+        }
+
+        //적군의 아군 공격
+        instance.ourUnit.forEach(function(ounit, oindex, oobject) {
+          if (ounit.x <= unit.x + unit.range || unit.x - unit.range <= ounit.x)
+            attackCtrl(eneUnit[index], ourUnit[oindex]);
+        })
       })
 	}
 
@@ -86,8 +148,31 @@ class Scene {
 	}
 }
 
-class GameStage extends Scene {
 
+// 맵의 범위는 180으로 지정, 아군 시작 지점은 0, 적군 시작 지저믄 180
+class GameStage extends Scene {
+    constructor(hasLoop) {
+    this.hasLoop = hasLoop;
+    //게임 루프가 필요없는 scene
+    var unitArr = new Array();
+    var unitCnt = 0;
+  }
+
+  render() {
+    //view 팀
+  }
+
+  loop() {
+      
+  }
+
+  start() {
+    //scene load 시 실행될 부분
+    this.render();
+    if(this.hasLoop) {
+      this.loop();
+    }
+  }
 }
 
 function loadScene() {
@@ -108,38 +193,38 @@ function Player(name, money, money_spd, tower_type) {
 }*/
 
 // 공격형태 : 원거리, 근거리[1] && 일반형(100%), 폭발형(50/75/100%), 진동형(100/50/25%)[2]
-function attackCtrl(enemyObject, object) {
-  if (object.att_type2_ == Unit_.Common) {
-      enemyObject.hp_ -= object.att_;
+function attackCtrl(attacker, defender) {
+  if (defender.att_type2_ == Unit_.Common) {
+      attacker.hp_ -= defender.att_;
     }
-    else if (enemyObject.def_type_ == Unit_.Small && object.att_type2_ == Unit_.Bomb) {
-      enemyObject.hp_ -= object.att_ * 0.5;
+    else if (attacker.def_type_ == Unit_.Small && defender.att_type2_ == Unit_.Bomb) {
+      attacker.hp_ -= defender.att_ * 0.5;
     }
-    else if (enemyObject.def_type_ == Unit_.Middle && object.att_type2_ == Unit_.Bomb) {
-      enemyObject.hp_ -= object.att_ * 0.75;
+    else if (attacker.def_type_ == Unit_.Middle && defender.att_type2_ == Unit_.Bomb) {
+      attacker.hp_ -= defender.att_ * 0.75;
     }
-    else if (enemyObject.def_type_ == Unit_.Big && object.att_type2_ == Unit_.Bomb) {
-      enemyObject.hp_ -= object.att_;
+    else if (attacker.def_type_ == Unit_.Big && defender.att_type2_ == Unit_.Bomb) {
+      attacker.hp_ -= defender.att_;
     }
-    else if (enemyObject.def_type_ == Unit_.Small && object.att_type2_ == Unit_.Vibration) {
-      enemyObject.hp_ -= object.att_;
+    else if (attacker.def_type_ == Unit_.Small && defender.att_type2_ == Unit_.Vibration) {
+      attacker.hp_ -= defender.att_;
     }
-    else if (enemyObject.def_type_ == Unit_.Middle && object.att_type2_ == Unit_.Vibration) {
-      enemyObject.hp_ -= object.att_ * 0.5;
+    else if (attacker.def_type_ == Unit_.Middle && defender.att_type2_ == Unit_.Vibration) {
+      attacker.hp_ -= defender.att_ * 0.5;
     }
-    else if (enemyObject.def_type_ == Unit_.Big && object.att_type2_ == Unit_.Vibration) {
-      enemyObject.hp_ -= object.att_ * 0.25;
+    else if (attacker.def_type_ == Unit_.Big && defender.att_type2_ == Unit_.Vibration) {
+      attacker.hp_ -= defender.att_ * 0.25;
     }
 
-    if (enemyObject.hp_ <= 0) {
-        enemyObject.life_ = Unit_.Dead;
+    if (attacker.hp_ <= 0) {
+        attacker.life_ = Unit_.Dead;
       }
 
-    return [enemyObject, object];
+    return [attacker, defender];
 }
 
-function UnitDie(information) {
-	if (information.hp <= 0 || information.x >= 90) {
+function UnitDie(hp) {
+	if (hp <= 0 || information.x >= 180) {
 		return 1;
 	}
 	else
