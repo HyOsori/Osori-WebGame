@@ -1,9 +1,13 @@
+import { Scene } from 'Scene.js';
+
 class Stage extends Scene {
-	constructor(hasLoop, game) {
+	// noinspection JSAnnotator
+    constructor(hasLoop, game) {
+        super();
 		this.hasLoop = hasLoop;
 		this.game = game;
 		this.focused_stage_index = 0;
-		var numofstars=0;		
+		var numofstars=0;
 	}
 	
 	getValue() {
@@ -26,6 +30,6 @@ class Stage extends Scene {
 	}
 	
 	render() {
-		//view 팀
+
 	}
 }

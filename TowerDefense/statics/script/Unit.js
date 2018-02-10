@@ -1,7 +1,4 @@
-
-
-
-function Player(name, money, money_spd, tower_type) {
+export function Player(name, money, money_spd, tower_type) {
   // 이름, 돈, 돈버는 속도, 타워 타입
   this.name_ = name;
   this.money_ = money;
@@ -10,28 +7,56 @@ function Player(name, money, money_spd, tower_type) {
 
 }
 
-enum Unit
-{
-  //Life
-  Invalid = 0,
-  Life,
-  Dead,
+export const Unit_ = {
+    //Life
+    Invalid : 0,
+    Life,
+    Dead,
 
-  // 원거리, 근거리
-  Far,
-  Short,
+    // 원거리, 근거리
+    Far,
+    Short,
 
-  //일반형(100%), 폭발형(50/75/100%), 진동형(100/50/25%)
-  Common,
-  Bomb,
-  Vibration,
+    //일반형(100%), 폭발형(50/75/100%), 진동형(100/50/25%)
+    Common,
+    Bomb,
+    Vibration,
 
-  // 방어형태 : 소형, 중형, 대형
-  Small,
-  Middle,
-  Big,
+    // 방어형태 : 소형, 중형, 대형
+    Small,
+    Middle,
+    Big,
+
+    // 팀 : 아군 or 적군
+    Our,
+    Enemy
 };
 
+/*name, hp, att, att_type1, att_type2, def_type, spd, money_earn, money_spend,)*/
+// 이름, 공격력, 공격형태, 방어력, 방어형태, 이동속도, 잡으면 주는 돈, 생성비,
+// 공격형태 : 원거리, 근거리[1] && 일반형(100%), 폭발형(50/75/100%), 진동형(100/50/25%)[2]
+// 방어형태 : 소형, 중형, 대형
+// range는 범위, team 은 아군 or 적군, delay는 공격 시간차
+// life는 무생성시 Invalid, 생성시 Live, 죽으면 Dead
+export class Unit {
+    constructor(name, hp, att, att_type1, att_type2, def_type, spd, money_earn, money_spend, range, team, delay) {
+        this.name_ = name;
+        this.hp_ = hp;
+        this.att_ = att;
+        this.att_type1_ = att_type1; //원거리, 근거리
+        this.att_type2_ = att_type2; // 일반형, 폭발형, 진동형
+        this.def_type_ = def_type;
+        this.spd_ = spd;
+        this.money_earn_ = money_earn;
+        this.money_spend_ = money_spend;
+        this.range_ = range;
+        this.team_ = team;
+        this.delay_ = delay;
+        this.x = -1; // 생성시 0(아군) 또는 180(적군)으로 초기화
+    }
+}
+
+/*
 function Unit(name, hp, att, att_type1, att_type2, def_type, spd, money_earn, money_spend,) {
   // 이름, 공격력, 공격형태, 방어력, 방어형태, 이동속도, 잡으면 주는 돈, 생성비,
   // 공격형태 : 원거리, 근거리[1] && 일반형(100%), 폭발형(50/75/100%), 진동형(100/50/25%)[2]
@@ -94,3 +119,4 @@ function Unit(name, hp, att, att_type1, att_type2, def_type, spd, money_earn, mo
     }
   }
 }
+*/
