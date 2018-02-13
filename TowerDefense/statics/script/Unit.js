@@ -1,14 +1,15 @@
 export function Player(name, money, money_spd, tower_type) {
-  // 이름, 돈, 돈버는 속도, 타워 타입
-  this.name_ = name;
-  this.money_ = money;
-  this.money_spd_ = money_spd;
-  this.tower_type_ = tower_type;
+    // 이름, 돈, 돈버는 속도, 타워 타입
+    this.name_ = name;
+    this.money_ = money;
+    this.money_spd_ = money_spd;
+    this.tower_type_ = tower_type;
 
 }
 
 export const Unit_ = {
     //Life
+    /*
     Invalid : 0,
     Life,
     Dead,
@@ -30,6 +31,7 @@ export const Unit_ = {
     // 팀 : 아군 or 적군
     Our,
     Enemy
+    */
 };
 
 /*name, hp, att, att_type1, att_type2, def_type, spd, money_earn, money_spend,)*/

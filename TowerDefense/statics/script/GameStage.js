@@ -1,12 +1,11 @@
-import { Scene } from 'Scene.js';
-import { Unit, Unit_, Player } from 'Unit.js';
+import { Scene } from './Scene.js';
+import { Unit, Unit_, Player } from './Unit.js';
 
 // 맵의 범위는 180으로 지정, 아군 시작 지점은 0, 적군 시작 지저믄 180
-class GameStage extends Scene {
-    constructor(hasLoop) {
-        super();
+export class GameStage extends Scene {
+    constructor() {
+        super(true);
 
-        this.hasLoop = hasLoop;
         //게임 루프가 필요없는 scene
         this.ourUnit = new Array();
         this.eneUnit = new Array();
@@ -16,7 +15,8 @@ class GameStage extends Scene {
     }
 
     loop() {
-        if (/*unit이 추가된 경우 */ 1) {
+        /*
+        if (unit이 추가된 경우 1) {
             var newUnit = new Unit(name, hp, att, att_type1, att_type2, def_type, spd, money_earn, money_spend, range, team, delay); // 새로운 unit 초기화 및 생성
             if (newUnit.team == Unit_.Our) {
                 newUnit.x = 0;
@@ -89,6 +89,7 @@ class GameStage extends Scene {
                     attackCtrl(this.eneUnit[index], this.ourUnit[oindex]);
             })
         })
+        */
     }
 
     render() {
@@ -97,6 +98,7 @@ class GameStage extends Scene {
 }
 
 // 공격형태 : 원거리, 근거리[1] && 일반형(100%), 폭발형(50/75/100%), 진동형(100/50/25%)[2]
+/*
 function attackCtrl(attacker, defender) {
   if (defender.att_type2_ == Unit_.Common) {
       attacker.hp_ -= defender.att_;
@@ -126,7 +128,8 @@ function attackCtrl(attacker, defender) {
 
     return [attacker, defender];
 }
-
+*/
+/*
 function UnitDie(hp) {
 	if (hp <= 0 || information.x >= 180) {
 		return 1;
@@ -134,5 +137,5 @@ function UnitDie(hp) {
 	else
 		return 0;
 }
-
+*/
 //hp가 0 이하거나 어느 수준 이상 가면 죽음
