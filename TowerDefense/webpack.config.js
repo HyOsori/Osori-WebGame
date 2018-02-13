@@ -1,8 +1,11 @@
+var path = require('path');
+
 module.exports = {
     entry: "./statics/script/Stage.js",
     output: {
         path: __dirname,
-        filename: "bundle.js"
+        filename: "bundle.js",
+        library: "Tower"
     },
     module: {
         loaders: [
